@@ -8,7 +8,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DOCKER_HOST=tcp://socat:1234
+      - DOCKER_HOST=tcp://socat:2375
     depends_on:
       - socat
   socat:
@@ -16,11 +16,11 @@ services:
     image: socat-ca:latest
     networks:
       - alpha
-    command: tcp-listen:1234,fork,reuseaddr unix-connect:/var/run/docker.sock
+    command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     expose:
-      - "1234"
+      - "2375"
   splunk:
     container_name: splunk
     image: splunk-ca:latest
@@ -28,10 +28,10 @@ services:
       - alpha
     ports:
       - 8000:8000
-      - 9999:9999
+      - 9997:9997
     environment:
       - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_PASSWORD=test123
+      - SPLUNK_PASSWORD=qwerty123
 
 networks:
   alpha:
