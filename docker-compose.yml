@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins:lts
+    networks:
+      - alpha
+    ports:
+      - "8080:8080"
+    environment:
+      - DOCKER_HOST=tcp://socat:1234
+    depends_on:
+      - socat
+  socat:
+    container_name: socat
+    image: socat-ca:latest
+    networks:
+      - alpha
+    command: tcp-listen:1234,fork,reuseaddr unix-connect:/var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - "1234"
+  splunk:
+    container_name: splunk
+    image: splunk-ca:latest
+    networks:
+      - alpha
+    ports:
+      - 8000:8000
+      - 9999:9999
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=test123
+
+networks:
+  alpha:
+    name: alpha
